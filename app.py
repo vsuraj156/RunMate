@@ -32,6 +32,35 @@ def index():
     
     return render_template("index.html")
 
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add_run():
+    if request.method == "GET":
+        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        times = ["12am-2am", "2am-4am", "4am-6am", "6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-8pm", "8pm-10pm", "10pm-12am"]
+        return render_template("add.html", days=days, times=times)
+    
+    # POST request
+
+    # get form inputs
+    distance = request.form.get("distance")
+    pace_mins = request.form.get("pace_mins")
+    pace_secs = request.form.get("pace_secs")
+    day = request.form.get("day")
+    time = request.form.get("time")
+    notes = request.form.get("notes")
+    pace_full = str(pace_mins) + ":" + str(pace_secs)
+    
+    if not day:
+        return apology("Day not selected from dropdown")
+    if not time:
+        return apology("Time not selected from dropdown")
+    
+    db.execute("INSERT INTO runs (user_id, distance, pace, day, time_of_day, notes) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, day, time, notes)
+
+    return redirect("/")
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
