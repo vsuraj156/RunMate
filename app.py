@@ -77,6 +77,26 @@ def add_run():
     return redirect("/")
 
 
+@app.route("/delete", methods=["GET", "POST"])
+@login_required
+def delete_run():
+    user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
+    print("------")
+    print(user_runs)
+    print("------")
+    if request.method == 'GET':
+        return render_template("delete.html", user_runs = user_runs)
+    
+    run_id = request.form.get("delete-run")
+    if not run_id:
+        return apology("Entry not selected from dropdown")
+
+    db.execute("DELETE FROM runs WHERE run_id = ?", run_id)
+
+
+    return redirect('/')
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
