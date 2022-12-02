@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+ 
+{% block title %}
+   Match
+{% endblock %}
+ 
+{% block main %}
+   <p>Here are a list of users with common availability times and similar 
+    goals for distance and pace. Click on each user to get their contact information and additional notes.</p>
+ 
+   <table class="table table-striped">
+       <thead>
+           <tr>
+               <th class="text-start">Name</th>
+               <th class="text-start">Day</th>
+               <th class="text-start">Time</th>
+               <th class="text-start">Distance</th>
+               <th class="text-start">Pace</th>
+               
+           </tr>
+       </thead>
+       <tbody>
+           {% for available_user in available_users %}
+               <tr>
+                   <td class="text-start">{{ available_user["full_name"] }}</td>
+                   <td class="text-start">{{ available_user["day"] }}</td>
+                   <td class="text-start">{{ available_user["time_of_day"] }}</td>
+                   <td class="text-start">{{ available_user["distance"] }}</td>
+                   <td class="text-start">{{ available_user["pace"] }}</td>
+               </tr>
+           {% endfor %}
+       </tbody>
+   </table>
+{% endblock %}
