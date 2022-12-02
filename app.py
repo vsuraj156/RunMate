@@ -29,8 +29,73 @@ def after_request(response):
 @login_required
 def index():
     # TODO: display current runs
+
+    # get first name to display
+    sql_name = db.execute("SELECT first_name FROM users WHERE id = ?", session["user_id"])
+    first_name = sql_name[0]["first_name"]
     
-    return render_template("index.html")
+    runs = db.execute("SELECT distance, pace, day, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
+    # print(runs)
+
+    return render_template("index.html", name=first_name, runs=runs)
+
+@app.route("/add", methods=["GET", "POST"])
+@login_required
+def add_run():
+
+    # visiting the page to fill out the form
+    if request.method == "GET":
+        # lists of days and time increments
+        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        times = ["12am-2am", "2am-4am", "4am-6am", "6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-8pm", "8pm-10pm", "10pm-12am"]
+        
+        # render form template
+        return render_template("add.html", days=days, times=times)
+    
+    # POST request
+
+    # get form inputs
+    distance = request.form.get("distance")
+    pace_mins = request.form.get("pace_mins")
+    pace_secs = request.form.get("pace_secs")
+    day = request.form.get("day")
+    time = request.form.get("time")
+    notes = request.form.get("notes")
+    pace_full = str(pace_mins) + ":" + str(pace_secs)
+    
+    # check that the user actually selected a proper entry from the dropdown
+    # as opposed to the default
+    if not day:
+        return apology("Day not selected from dropdown")
+    if not time:
+        return apology("Time not selected from dropdown")
+    
+    # insert entry into runs table
+    db.execute("INSERT INTO runs (user_id, distance, pace, day, time_of_day, notes) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, day, time, notes)
+
+    # redirect back to index page
+    return redirect("/")
+
+
+@app.route("/delete", methods=["GET", "POST"])
+@login_required
+def delete_run():
+    user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
+    print("------")
+    print(user_runs)
+    print("------")
+    if request.method == 'GET':
+        return render_template("delete.html", user_runs = user_runs)
+    
+    run_id = request.form.get("delete-run")
+    if not run_id:
+        return apology("Entry not selected from dropdown")
+
+    db.execute("DELETE FROM runs WHERE run_id = ?", run_id)
+
+
+    return redirect('/')
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -132,6 +197,8 @@ def register():
 
     # check that username does not already exist
     if len(db.execute("SELECT email FROM users WHERE email == ?", email)) == 0:
+        # SQL insert statement is slightly different based on whether
+        #   or not the user gave their Strava id
         if not strava:
             db.execute("INSERT INTO users (first_name, last_name, email, hash) VALUES (?, ?, ?, ?)", first_name, last_name, email, hashed_pw)
         else:
@@ -139,7 +206,7 @@ def register():
         return redirect("/")
 
     # if we get here, that means the username already existed.
-    return apology("Username already exists, please choose another")
+    return apology("Email already exists, please choose another")
 
 
 @app.route("/logout")
