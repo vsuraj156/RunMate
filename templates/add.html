@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add Run
+{% endblock %}
+
+{% block main %}
+    <form action="/add" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" class="form-control mx-auto w-auto" min="0" name="distance" placeholder="Distance (miles)" type="number" step="0.1" required>
+        </div>
+        <div class="mb-3">
+            Pace&nbsp;&nbsp;&nbsp;&nbsp;
+            <!-- <input autocomplete="off" class="form-control mx-auto w-auto" name="pace" placeholder="Pace (minutes per mile)" type="text" required> -->
+            <input autocomplete="off" class="form-control" min="0" max="29" name="pace_mins" placeholder="Min" type="number" required style="display: inline-block; width:70px;"> :
+            <input autocomplete="off" class="form-control" min="0" max="59" name="pace_secs" placeholder="Sec" type="number" required style="display: inline-block; width:70px;">
+        </div>
+        <div class="mb-3">
+            <select name="day" class="form-select mx-auto w-auto">
+                <option disabled selected>Day</option>
+                {% for day in days %}
+                    <option value="{{ day }}">{{ day }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <select name="time" class="form-select mx-auto w-auto">
+                <option disabled selected>Time of Day</option>
+                {% for time in times %}
+                    <option value="{{ time }}">{{ time }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <textarea autocomplete="off" class="form-control mx-auto w-auto" name="notes" placeholder="(optional) Notes" rows="3" cols="50"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Add Run</button>
+    </form>
+{% endblock %}

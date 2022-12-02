@@ -5,5 +5,29 @@
 {% endblock %}
 
 {% block main %}
-    <p>TODO: display current runs</p>
+    <h1>Hello, {{ name }}!</h1>
+    <p>Here are the runs you have currently inputted:</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="text-start">Day</th>
+                <th class="text-start">Time</th>
+                <th class="text-start">Distance</th>
+                <th class="text-start">Pace</th>
+                <th class="text-start">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in runs %}
+                <tr>
+                    <td class="text-start">{{ run['day'] }}</td>
+                    <td class="text-start">{{ run['time_of_day'] }}</td>
+                    <td class="text-start">{{ run['distance'] }}</td>
+                    <td class="text-start">{{ run['pace'] }}</td>
+                    <td class="text-start">{{ run['notes'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
