@@ -218,3 +218,60 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+
+@app.route("/match")
+@login_required
+def match():  
+    # Gets the data input from the runs table for the logged-in user
+    user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
+    # If user hasn't yet entered any runs, redirect them to the Add Runs page
+    if len(user_runs) == 0:
+       return render_template("add.html") 
+
+    for user_run in user_runs:
+        # Changes the input pace from minute:second format to an int representing the number of seconds
+        user_unedited_pace = user_run["pace"].split(':')
+        user_run["pace"] = int(user_unedited_pace[0]) * 60 + int(user_unedited_pace[1])
+
+    # Gets the data input from the runs table for all users except the logged-in user
+    other_runs = db.execute("SELECT * FROM runs WHERE user_id != ?", session["user_id"])
+
+    for other_run in other_runs:
+        # Changes the input pace from minute:second format to an int representing the number of seconds
+        other_unedited_pace = other_run["pace"].split(':')
+        other_run["pace"] = int(other_unedited_pace[0]) * 60 + int(other_unedited_pace[1])
+
+
+    # Matching user to other runners
+    # Creates an list of dictionaries matched users with common availability times and pace within +- 1 min and distance within +- 1.5 miles
+    # Creates a blank table with same headers as user_runs, which will contain list of matched users
+    available_users = []
+
+    for user_run in user_runs:
+        for other_run in other_runs:
+            if ((user_run["day"] == other_run["day"]) and (user_run["time_of_day"] == other_run["time_of_day"]) 
+            and (user_run["distance"] >= (other_run["distance"] - 1.5) and user_run["distance"] <= (other_run["distance"] + 1.5))
+            and (user_run["pace"] >= (other_run["pace"] - 60) and user_run["pace"] <= (other_run["pace"] + 60))):
+                available_users.append(other_run)
+
+    
+    # For each matched user, convert their pace from seconds back to minute:seconds
+    for available_user in available_users:
+        name_list = db.execute("SELECT * FROM users WHERE id = ?", available_user["user_id"])
+        name = name_list[0]["first_name"] + " " + name_list[0]["last_name"]
+        available_user["full_name"] = name
+
+
+        min = str(available_user["pace"] // 60)
+        # If pace % 60 is 0, add an extra zero so the time format shows as xx:00 instead of xx:0
+        sec = available_user["pace"] % 60
+        if sec == 0:
+            sec = str(available_user["pace"] % 60) + str(0)
+        else:
+            sec = str(available_user["pace"] % 60)
+        
+        available_user["pace"] = min + ":" + sec 
+    
+    # Merge the available_users table with the users table
+    return render_template("match.html", available_users = available_users)
