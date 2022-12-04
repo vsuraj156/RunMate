@@ -10,7 +10,7 @@
             <select name="delete-run" class="form-select mx-auto w-auto">
                 <option disabled selected>Run</option>
                 {% for run in user_runs %}
-                    <option value="{{ run['run_id'] }}">{{ run['day'] }} {{ run['time_of_day'] }}</option>
+                    <option value="{{ run['run_id'] }}">{{ run['date'] }} {{ run['time_of_day'] }}</option>
                 {% endfor %}
             </select>
         </div>

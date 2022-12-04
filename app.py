@@ -5,7 +5,7 @@ from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
-import datetime
+from datetime import datetime
 
 from helpers import apology, login_required
 
@@ -16,6 +16,8 @@ db = SQL("sqlite:///run.db")
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+cur_date = datetime.today().strftime('%Y-%m-%d')
 
 @app.after_request
 def after_request(response):
@@ -34,10 +36,10 @@ def index():
     sql_name = db.execute("SELECT first_name FROM users WHERE id = ?", session["user_id"])
     first_name = sql_name[0]["first_name"]
     
-    runs = db.execute("SELECT distance, pace, day, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
+    runs = db.execute("SELECT distance, pace, date, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
     # print(runs)
-
-    return render_template("index.html", name=first_name, runs=runs)
+    
+    return render_template("index.html", name=first_name, runs=runs, cur_date = cur_date)
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
@@ -46,11 +48,11 @@ def add_run():
     # visiting the page to fill out the form
     if request.method == "GET":
         # lists of days and time increments
-        days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        # days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
         times = ["12am-2am", "2am-4am", "4am-6am", "6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-8pm", "8pm-10pm", "10pm-12am"]
         
         # render form template
-        return render_template("add.html", days=days, times=times)
+        return render_template("add.html", times=times, cur_date=cur_date)
     
     # POST request
 
@@ -58,20 +60,20 @@ def add_run():
     distance = request.form.get("distance")
     pace_mins = request.form.get("pace_mins")
     pace_secs = request.form.get("pace_secs")
-    day = request.form.get("day")
+    date = request.form.get("date")
     time = request.form.get("time")
     notes = request.form.get("notes")
     pace_full = str(pace_mins) + ":" + str(pace_secs)
     
     # check that the user actually selected a proper entry from the dropdown
     # as opposed to the default
-    if not day:
+    if not date:
         return apology("Day not selected from dropdown")
     if not time:
         return apology("Time not selected from dropdown")
     
     # insert entry into runs table
-    db.execute("INSERT INTO runs (user_id, distance, pace, day, time_of_day, notes) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, day, time, notes)
+    db.execute("INSERT INTO runs (user_id, distance, pace, date, time_of_day, notes) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, date, time, notes)
 
     # redirect back to index page
     return redirect("/")
@@ -227,7 +229,7 @@ def match():
     user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
     # If user hasn't yet entered any runs, redirect them to the Add Runs page
     if len(user_runs) == 0:
-       return render_template("add.html") 
+       return redirect("/add") 
 
     for user_run in user_runs:
         # Changes the input pace from minute:second format to an int representing the number of seconds
@@ -250,7 +252,7 @@ def match():
 
     for user_run in user_runs:
         for other_run in other_runs:
-            if ((user_run["day"] == other_run["day"]) and (user_run["time_of_day"] == other_run["time_of_day"]) 
+            if ((user_run["date"] == other_run["date"]) and (user_run["time_of_day"] == other_run["time_of_day"]) 
             and (user_run["distance"] >= (other_run["distance"] - 1.5) and user_run["distance"] <= (other_run["distance"] + 1.5))
             and (user_run["pace"] >= (other_run["pace"] - 60) and user_run["pace"] <= (other_run["pace"] + 60))):
                 available_users.append(other_run)

@@ -12,7 +12,7 @@
        <thead>
            <tr>
                <th class="text-start">Name</th>
-               <th class="text-start">Day</th>
+               <th class="text-start">Date</th>
                <th class="text-start">Time</th>
                <th class="text-start">Distance</th>
                <th class="text-start">Pace</th>
@@ -23,7 +23,7 @@
            {% for available_user in available_users %}
                <tr>
                    <td class="text-start">{{ available_user["full_name"] }}</td>
-                   <td class="text-start">{{ available_user["day"] }}</td>
+                   <td class="text-start">{{ available_user["date"] }}</td>
                    <td class="text-start">{{ available_user["time_of_day"] }}</td>
                    <td class="text-start">{{ available_user["distance"] }}</td>
                    <td class="text-start">{{ available_user["pace"] }}</td>

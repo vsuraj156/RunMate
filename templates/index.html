@@ -6,12 +6,13 @@
 
 {% block main %}
     <h1>Hello, {{ name }}!</h1>
+    <p>Today's date is {{ cur_date }}</p>
     <p>Here are the runs you have currently inputted:</p>
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th class="text-start">Day</th>
+                <th class="text-start">Date</th>
                 <th class="text-start">Time</th>
                 <th class="text-start">Distance</th>
                 <th class="text-start">Pace</th>
@@ -21,7 +22,7 @@
         <tbody>
             {% for run in runs %}
                 <tr>
-                    <td class="text-start">{{ run['day'] }}</td>
+                    <td class="text-start">{{ run['date'] }}</td>
                     <td class="text-start">{{ run['time_of_day'] }}</td>
                     <td class="text-start">{{ run['distance'] }}</td>
                     <td class="text-start">{{ run['pace'] }}</td>
