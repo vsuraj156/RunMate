@@ -9,6 +9,8 @@ from datetime import datetime
 
 from helpers import apology, login_required
 
+error_message = False
+
 app = Flask(__name__)
 
 db = SQL("sqlite:///run.db")
@@ -32,8 +34,17 @@ def after_request(response):
 def index():
     # TODO: display current runs
 
+    
+
     # get first name to display
     sql_name = db.execute("SELECT first_name FROM users WHERE id = ?", session["user_id"])
+    global error_message
+    if len(sql_name) == 0:
+        error_message = True
+    else:
+        error_message = False
+    
+
     first_name = sql_name[0]["first_name"]
     
     runs = db.execute("SELECT distance, pace, date, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
@@ -44,7 +55,7 @@ def index():
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_run():
-
+    
     # visiting the page to fill out the form
     if request.method == "GET":
         # lists of days and time increments
@@ -52,7 +63,7 @@ def add_run():
         times = ["12am-2am", "2am-4am", "4am-6am", "6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-8pm", "8pm-10pm", "10pm-12am"]
         
         # render form template
-        return render_template("add.html", times=times, cur_date=cur_date)
+        return render_template("add.html", times=times, cur_date=cur_date, error_message = error_message)
     
     # POST request
 
@@ -85,9 +96,7 @@ def add_run():
 @login_required
 def delete_run():
     user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
-    print("------")
-    print(user_runs)
-    print("------")
+
     if request.method == 'GET':
         return render_template("delete.html", user_runs = user_runs)
     
@@ -204,7 +213,10 @@ def match():
     user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
     # If user hasn't yet entered any runs, redirect them to the Add Runs page
     if len(user_runs) == 0:
-       return redirect("/add") 
+        
+        global error_message
+        error_message = True
+        return redirect("/add") 
 
     for user_run in user_runs:
         # Changes the input pace from minute:second format to an int representing the number of seconds
