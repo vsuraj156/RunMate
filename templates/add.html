@@ -16,12 +16,6 @@
             <input autocomplete="off" class="form-control" min="0" max="59" name="pace_secs" placeholder="Sec" type="number" required style="display: inline-block; width:70px;">
         </div>
         <div class="mb-3">
-            <!-- <select name="day" class="form-select mx-auto w-auto">
-                <option disabled selected>Day</option>
-                {% for day in days %}
-                    <option value="{{ day }}">{{ day }}</option>
-                {% endfor %}
-            </select> -->
             <input class="form-control mx-auto w-auto" type="date" name="date" min="{{ cur_date }}">
         </div>
         <div class="mb-3">
@@ -34,6 +28,9 @@
         </div>
         <div class="mb-3">
             <textarea autocomplete="off" class="form-control mx-auto w-auto" name="notes" placeholder="(optional) Notes" rows="3" cols="50"></textarea>
+        </div>
+        <div class="mb-3">
+            <textarea autocomplete="off" class="form-control mx-auto w-auto" name="map_link" placeholder="(optional) On The Go Map share link" rows="1" cols="40"></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Add Run</button>
     </form>

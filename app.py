@@ -63,17 +63,19 @@ def add_run():
     date = request.form.get("date")
     time = request.form.get("time")
     notes = request.form.get("notes")
+    map_link = request.form.get("map_link")
+
     pace_full = str(pace_mins) + ":" + str(pace_secs)
     
     # check that the user actually selected a proper entry from the dropdown
     # as opposed to the default
     if not date:
-        return apology("Day not selected from dropdown")
+        return apology("Date not selected")
     if not time:
         return apology("Time not selected from dropdown")
     
     # insert entry into runs table
-    db.execute("INSERT INTO runs (user_id, distance, pace, date, time_of_day, notes) VALUES (?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, date, time, notes)
+    db.execute("INSERT INTO runs (user_id, distance, pace, date, time_of_day, notes, map_link) VALUES (?, ?, ?, ?, ?, ?, ?)", session["user_id"], distance, pace_full, date, time, notes, map_link)
 
     # redirect back to index page
     return redirect("/")
@@ -170,29 +172,6 @@ def register():
     # Check if password and confirmation match
     if password != confirm:
         return apology("Password and confirmation do not match")
-
-    # check that password is at least 10 characters
-    # if len(password) < 10:
-    #     return apology("Password is less than 10 characters")
-
-    # # check that password has at least one lowercase letter
-    # if not any(char.islower() for char in password):
-    #     return apology("Password does not contain a lowercase letter")
-
-    # # check that password has at least one uppercase letter
-    # if not any(char.isupper() for char in password):
-    #     return apology("Password does not contain an uppercase letter")
-
-    # # check that password has at least one number
-    # if not any(char.isdigit() for char in password):
-    #     return apology("Password does not contain a number")
-
-    # # check that password has at least one special character
-    # special_chars = ["!", "@", "#", "$", "%", "&", "^", "*"]
-    # if not any(char in special_chars for char in password):
-    #     return apology("Password does not contain a special character")
-
-    # if we have made it here, then everything in the registration form is valid
 
     # get hashed version of the password, going with default method and salt length
     hashed_pw = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
