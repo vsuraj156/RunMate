@@ -9,8 +9,6 @@ from datetime import datetime
 
 from helpers import apology, login_required
 
-error_message = False
-
 app = Flask(__name__)
 
 db = SQL("sqlite:///run.db")
@@ -19,7 +17,10 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# get current date (users shouldn't be able to select runs in the past)
 cur_date = datetime.today().strftime('%Y-%m-%d')
+# whether or not an error message should be displayed
+error_message = False
 
 @app.after_request
 def after_request(response):
@@ -34,32 +35,29 @@ def after_request(response):
 def index():
     # TODO: display current runs
 
-    
-
     # get first name to display
     sql_name = db.execute("SELECT first_name FROM users WHERE id = ?", session["user_id"])
+    first_name = sql_name[0]["first_name"]
+    
+    # get all runs for this user
+    runs = db.execute("SELECT distance, pace, date, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
+
+    # if there are no runs yet, set error message boolean to true
+    # This will cause a warning in add to appear when the user navigates there
     global error_message
-    if len(sql_name) == 0:
+    if len(runs) == 0:
         error_message = True
     else:
         error_message = False
-    
-
-    first_name = sql_name[0]["first_name"]
-    
-    runs = db.execute("SELECT distance, pace, date, time_of_day, notes FROM runs WHERE user_id = ?", session["user_id"])
-    # print(runs)
     
     return render_template("index.html", name=first_name, runs=runs, cur_date = cur_date)
 
 @app.route("/add", methods=["GET", "POST"])
 @login_required
 def add_run():
-    
     # visiting the page to fill out the form
     if request.method == "GET":
-        # lists of days and time increments
-        # days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        # list of time increments
         times = ["12am-2am", "2am-4am", "4am-6am", "6am-8am", "8am-10am", "10am-12pm", "12pm-2pm", "2pm-4pm", "4pm-6pm", "6pm-8pm", "8pm-10pm", "10pm-12am"]
         
         # render form template
@@ -79,7 +77,9 @@ def add_run():
     pace_full = str(pace_mins) + ":" + str(pace_secs)
     
     # check that the user actually selected a proper entry from the dropdown
-    # as opposed to the default
+    # as opposed to the default (even though default is not selectable, 
+    #   if it is not changed from initial then the user can still click enter and it will go through
+    #   so we have to check for that here)
     if not date:
         return apology("Date not selected")
     if not time:
@@ -95,25 +95,26 @@ def add_run():
 @app.route("/delete", methods=["GET", "POST"])
 @login_required
 def delete_run():
+    # get all runs for this user
     user_runs = db.execute("SELECT * FROM runs WHERE user_id = ?", session["user_id"])
 
+    # normal navigation to the page
     if request.method == 'GET':
         return render_template("delete.html", user_runs = user_runs)
     
+    # get run id from the form
     run_id = request.form.get("delete-run")
+    # default entry selected instead of actual run
     if not run_id:
         return apology("Entry not selected from dropdown")
 
+    # delete specified run, and navigate back to index
     db.execute("DELETE FROM runs WHERE run_id = ?", run_id)
-
-
     return redirect('/')
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
-
     # Forget any user_id
     session.clear()
 
@@ -147,8 +148,6 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
-
     # if our request method is GET, then the user must have navigated to the register page.
     # We just want to display the register options
     if request.method == 'GET':
@@ -162,7 +161,6 @@ def register():
     email = request.form.get("email")
     password = request.form.get("password")
     confirm = request.form.get("confirmation")
-    strava = request.form.get("strava")
 
     # check that the required text boxes were actually filled in
     # this is redundant now that we've added the "required" tag in HTML
@@ -198,7 +196,7 @@ def register():
 @app.route("/logout")
 def logout():
     """Log user out"""
-
+    
     # Forget any user_id
     session.clear()
 
