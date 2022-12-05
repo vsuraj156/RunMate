@@ -15,26 +15,30 @@
         <title>RunMate: {% block title %}{% endblock %}</title>
     </head>
     <body>
-        <nav class="bg-light border navbar navbar-expand-md navbar-light">
+        <div class="bg-image" 
+            style="background-image: url('https://img.freepik.com/premium-photo/white-sports-shoes-heart-shape-from-laces-red-background-simple-flat-lay-banner-with-copy-space_313478-210.jpg');
+            height: 20vh">
+        </div>
+        <nav class="bg-dark border navbar navbar-expand-md navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/">RunMate</a>
+                <a class="navbar-brand" href="/" style="color: white">RunMate</a>
                 <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbar">
                     {% if session["user_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/match">Match</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/add">Add Run</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/delete">Delete Run</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/match" style="color: white">Match</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/add" style="color: white">Add Run</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/delete" style="color: white">Delete Run</a></li>
                         </ul>
                         <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/logout" style="color: white">Log Out</a></li>
                         </ul>
                     {% else %}
                         <ul class="navbar-nav ms-auto mt-2">
-                            <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/register" style="color: white">Register</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/login" style="color: white">Log In</a></li>
                         </ul>
                     {% endif %}
                 </div>

@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
+    font-family: "Lucida Console", "Courier New", monospace;    
  }
  .container{
     width: 100%;
@@ -63,6 +63,9 @@
     cursor: pointer;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);   
  }
+
+
+ 
   
  /* .btn{
     padding: 10px 60px;
