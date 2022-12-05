@@ -1,34 +1,64 @@
 {% extends "layout.html" %}
- 
+
 {% block title %}
-   Match
+  Match
 {% endblock %}
- 
+
 {% block main %}
-   <p>Here are a list of users with common availability times and similar 
-    goals for distance and pace. Click on each user to get their contact information and additional notes.</p>
+  <p>Here are a list of users with common availability times and similar
+   goals for distance and pace. Click on each user to get their contact information and additional notes.</p>
+  <table class="table table-striped">
+      <thead>
+          <tr>
+              <th class="text-start">Name</th>
+              <th class="text-start">Date</th>
+              <th class="text-start">Time</th>
+              <th class="text-start">Distance</th>
+              <th class="text-start">Pace</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for available_user in available_users %}
+              <tr>
+                  <!-- <td class="text-start">{{ available_user["full_name"] }}</td>
+                  <td class="text-start">{{ available_user["date"] }}</td>
+                  <td class="text-start">{{ available_user["time_of_day"] }}</td>
+                  <td class="text-start">{{ available_user["distance"] }}</td>
+                  <td class="text-start">{{ available_user["pace"] }}</td> -->
+                  <td class="text-start"><button type = "button" class="btn" onclick="openPopup()">{{ available_user["full_name"] }}</button></td>
+                  <td class="text-start"><button type = "button" class="btn" onclick="openPopup()">{{ available_user["date"] }}</button></td>
+                  <td class="text-start"><button type = "button" class="btn" onclick="openPopup()">{{ available_user["time_of_day"] }}</button></td>
+                  <td class="text-start"><button type = "button" class="btn" onclick="openPopup()">{{ available_user["distance"] }} mi</button></td>
+                  <td class="text-start"><button type = "button" class="btn" onclick="openPopup()">{{ available_user["pace"] }}</button></td>
+              </tr>
+               <div class="popup" id="popup">
+                   <img src="/static/favicon.ico">
+                   <h2>Here is the runner information!</h2>
+                   <p>Full Name: {{ available_user["full_name"] }}</p>
+                   <p>Email: {{ available_user["email"] }}</p>
+                   <p>Date: {{ available_user["date"] }}</p>
+                   <p>Time: {{ available_user["time_of_day"] }}</p>
+                   <p>Distance: {{ available_user["distance"] }} mi</p>
+                   <p>Pace: {{ available_user["pace"] }}</p>
+                   {% if available_user["notes"] != "" %}
+                       <p>Additional Notes: {{ available_user["notes"] }}</p>
+                   {% endif %}
+               <button type="button" onclick="closePopup()">OK</button>
+           </div>
+           <script>
+               let popup = document.getElementById("popup");
  
-   <table class="table table-striped">
-       <thead>
-           <tr>
-               <th class="text-start">Name</th>
-               <th class="text-start">Date</th>
-               <th class="text-start">Time</th>
-               <th class="text-start">Distance</th>
-               <th class="text-start">Pace</th>
-               
-           </tr>
-       </thead>
-       <tbody>
-           {% for available_user in available_users %}
-               <tr>
-                   <td class="text-start">{{ available_user["full_name"] }}</td>
-                   <td class="text-start">{{ available_user["date"] }}</td>
-                   <td class="text-start">{{ available_user["time_of_day"] }}</td>
-                   <td class="text-start">{{ available_user["distance"] }}</td>
-                   <td class="text-start">{{ available_user["pace"] }}</td>
-               </tr>
-           {% endfor %}
-       </tbody>
-   </table>
+               function openPopup(){
+                  popup.classList.add("open-popup");
+               }
+               function closePopup(){
+                  popup.classList.remove("open-popup");
+               }
+           </script>
+          {% endfor %}
+      </tbody>
+  </table>
 {% endblock %}
+ 
+ 
+
