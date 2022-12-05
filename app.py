@@ -199,12 +199,8 @@ def register():
 
     # check that username does not already exist
     if len(db.execute("SELECT email FROM users WHERE email == ?", email)) == 0:
-        # SQL insert statement is slightly different based on whether
-        #   or not the user gave their Strava id
-        if not strava:
-            db.execute("INSERT INTO users (first_name, last_name, email, hash) VALUES (?, ?, ?, ?)", first_name, last_name, email, hashed_pw)
-        else:
-            db.execute("INSERT INTO users (first_name, last_name, email, hash, strava) VALUES (?, ?, ?, ?, ?)", first_name, last_name, email, hashed_pw, strava)
+        # SQL insert statement
+        db.execute("INSERT INTO users (first_name, last_name, email, hash) VALUES (?, ?, ?, ?)", first_name, last_name, email, hashed_pw)
         return redirect("/")
 
     # if we get here, that means the username already existed.
