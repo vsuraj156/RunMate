@@ -264,6 +264,9 @@ def match():
         name = name_list[0]["first_name"] + " " + name_list[0]["last_name"]
         available_user["full_name"] = name
 
+        email = name_list[0]["email"]
+        available_user["email"] = email
+
 
         min = str(available_user["pace"] // 60)
         # If pace % 60 is 0, add an extra zero so the time format shows as xx:00 instead of xx:0
