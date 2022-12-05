@@ -15,7 +15,7 @@
     justify-content: center;
  }
  .popup{
-    width: 400px;
+    width: 600px;
     background: #e6a7a7;
     border-radius: 30px;
     border-width: 5px;
@@ -39,7 +39,7 @@
   
  .popup img{
     /* width: 100px; */
-    margin-top: 0px;
+    margin-top: 200px;
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(red, green, blue, alpha);
  }
@@ -52,7 +52,7 @@
   
  .popup button{
     width: 100%;
-    margin-top: 50px;
+    margin-top: 10px;
     padding: 10px 0;
     background: #4f7145;
     color: #fff;
