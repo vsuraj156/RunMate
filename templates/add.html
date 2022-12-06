@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block main %}
-    <!-- {% if error_message %} -->
-    <!-- {% endif %} -->
+    <p>Fill out this form to add a run to your schedule.</p>
+    <p>You can optionally submit a proposed route; navigate to <a href="https://onthegomap.com">On The Go Map</a>, map out your route,
+        get the share link from the top right corner, and paste it into the last text box (must be in the form http(s)://link.domain).</p>
     <form action="/add" method="post">
         {% if error_message %}
             <div class="alert alert-warning" role="alert">
@@ -39,7 +40,7 @@
             <textarea autocomplete="off" class="form-control mx-auto w-auto" name="notes" placeholder="(optional) Notes" rows="3" cols="50"></textarea>
         </div>
         <div class="mb-3">
-            <textarea autocomplete="off" class="form-control mx-auto w-auto" name="map_link" placeholder="(optional) On The Go Map share link" rows="1" cols="40"></textarea>
+            <input autocomplete="off" class="form-control mx-auto w-auto" name="map_link" placeholder="(optional) On The Go Map share link" type="url"></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Add Run</button>
     </form>
