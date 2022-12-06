@@ -3,6 +3,8 @@ CS50 Final Project 2022
 
 Varun Suraj and Kevin Wang
 
+Video link: https://youtu.be/nfWWj3ZurdM
+
 ## Abstract
 
 RunMate is a web-based application that essentially matches users who are interested in finding a new partner (or partners) to run with. Users register for an account, and can subsequently “Add Runs” (as many as they desire) to be put in the database, and RunMate will then provide a list of matched users based on the criteria in what the user inputted in “Add Runs”. The matching is made based on several criteria, including if there are common times of availability (date and the time of the day). 
